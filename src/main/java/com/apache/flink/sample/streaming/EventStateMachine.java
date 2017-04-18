@@ -1,12 +1,9 @@
-package com.emc.flink.sample.streaming;
+package com.apache.flink.sample.streaming;
 
 import org.apache.flink.api.java.tuple.Tuple2;
-import scala.util.parsing.combinator.testing.Str;
 
 import java.io.Serializable;
 import java.util.*;
-
-import static com.emc.flink.sample.streaming.Event.EventType;
 
 public class EventStateMachine {
 
@@ -18,7 +15,7 @@ public class EventStateMachine {
         private State targetState;
         private float prob;
 
-        public Transition(EventType event, State targetState, float prob) {
+        public Transition(Event.EventType event, State targetState, float prob) {
             this.event = event;
             this.targetState = targetState;
             this.prob = prob;
@@ -51,7 +48,7 @@ public class EventStateMachine {
             return transitions == null || transitions.isEmpty();
         }
 
-        public State transition(final EventType eventType) {
+        public State transition(final Event.EventType eventType) {
             Optional<State> optionalState = transitions
                     .stream()
                     .filter(t -> t.event.getValue() == eventType.getValue())
@@ -65,7 +62,7 @@ public class EventStateMachine {
             }
         }
 
-        public Tuple2<EventType, State> randomTransition(Random rnd) {
+        public Tuple2<Event.EventType, State> randomTransition(Random rnd) {
             if (transitions.isEmpty()) {
                 throw new RuntimeException("Cannot transition from state " + name);
             }
@@ -83,12 +80,12 @@ public class EventStateMachine {
         }
 
         public Event.EventType randomInvalidTransition(Random rnd) {
-            EventType value = new EventType(-1);
+            Event.EventType value = new Event.EventType(-1);
 
             while (value.getValue() == -1) {
-                EventType g = new EventType(EventType.g);
+                Event.EventType g = new Event.EventType(Event.EventType.g);
                 int candidate = rnd.nextInt(g.getValue() + 1);
-                value = (transition(new EventType(candidate)) instanceof InvalidTransition) ? new EventType(candidate) : new EventType(-1);
+                value = (transition(new Event.EventType(candidate)) instanceof InvalidTransition) ? new Event.EventType(candidate) : new Event.EventType(-1);
             }
             return value;
         }
@@ -166,19 +163,19 @@ public class EventStateMachine {
     }
 
     public static class Transitions {
-        protected static Transition transitionG = new Transition(new EventType(EventType.g), new TerminalState("Terminal"), 1.0f);
+        protected static Transition transitionG = new Transition(new Event.EventType(Event.EventType.g), new TerminalState("Terminal"), 1.0f);
         protected static Z z = new Z("Z", Arrays.asList(transitionG));
 
-        protected static Transition transitionZ = new Transition(new EventType(EventType.e), z, 1.0f);
+        protected static Transition transitionZ = new Transition(new Event.EventType(Event.EventType.e), z, 1.0f);
         protected static Y y = new Y("Y", Arrays.asList(transitionZ));
 
-        protected static Transition transitionY = new Transition(new EventType(EventType.b), y, 1.0f);
+        protected static Transition transitionY = new Transition(new Event.EventType(Event.EventType.b), y, 1.0f);
         protected static X x = new X("X", Arrays.asList(transitionY, transitionZ));
 
         protected static W w = new W("W", Arrays.asList(transitionY));
 
-        protected static Transition transitionW = new Transition(new EventType(EventType.a), w, 0.6f);
-        protected static Transition transitionX = new Transition(new EventType(EventType.c), x, 0.4f);
+        protected static Transition transitionW = new Transition(new Event.EventType(Event.EventType.a), w, 0.6f);
+        protected static Transition transitionX = new Transition(new Event.EventType(Event.EventType.c), x, 0.4f);
         protected static InitialState initialState = new InitialState("Initial", Arrays.asList(transitionW, transitionX));
     }
 

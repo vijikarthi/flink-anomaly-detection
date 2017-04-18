@@ -1,4 +1,4 @@
-package com.emc.flink.sample.streaming;
+package com.apache.flink.sample.streaming;
 
 import org.apache.flink.api.java.tuple.Tuple2;
 

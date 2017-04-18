@@ -1,4 +1,4 @@
-package com.emc.flink.sample.streaming;
+package com.apache.flink.sample.streaming;
 
 import org.apache.flink.api.common.functions.FlatMapFunction;
 import org.apache.flink.streaming.api.checkpoint.Checkpointed;
@@ -6,7 +6,6 @@ import org.apache.flink.streaming.api.environment.StreamExecutionEnvironment;
 import org.apache.flink.util.Collector;
 
 import java.util.HashMap;
-import java.util.Map;
 
 public class Main {
 
